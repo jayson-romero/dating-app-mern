@@ -2,16 +2,26 @@ import "./DatingCards.css"
 import { useState, useEffect } from "react"
 import DatingCard from "react-tinder-card"
 import axios from "axios"
+import LoadingComponent from "../Loading/LoadingComponent"
 
 const DatingCards = () => {
 	const [people, setPeople] = useState([])
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState(false)
 
 	useEffect(() => {
+		setLoading(true)
 		const fetchData = async () => {
-			const res = await axios.get(
-				"https://dating-mern-backend-449658771c25.herokuapp.com/dating/cards"
-			)
-			setPeople(res.data)
+			try {
+				const res = await axios.get(
+					"https://dating-app-server.onrender.com/dating/cards"
+				)
+				setPeople(res.data)
+				setLoading(false)
+			} catch (error) {
+				console.log(error.message)
+				setError(true)
+			}
 		}
 		fetchData()
 	}, [])
@@ -21,6 +31,10 @@ const DatingCards = () => {
 	}
 	const outOfFrame = (name) => {
 		console.log(name + " left the screen!!")
+	}
+
+	if (loading) {
+		return <LoadingComponent />
 	}
 
 	return (
