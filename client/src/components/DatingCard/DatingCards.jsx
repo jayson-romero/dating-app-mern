@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import DatingCard from "react-tinder-card"
 import axios from "axios"
 import LoadingComponent from "../Loading/LoadingComponent"
+import ErrorComponent from "../Error/ErrorComponent"
 
 const DatingCards = () => {
 	const [people, setPeople] = useState([])
@@ -10,8 +11,8 @@ const DatingCards = () => {
 	const [error, setError] = useState(false)
 
 	useEffect(() => {
-		setLoading(true)
 		const fetchData = async () => {
+			setLoading(true)
 			try {
 				const res = await axios.get(
 					"https://dating-app-server.onrender.com/dating/cards"
@@ -19,8 +20,8 @@ const DatingCards = () => {
 				setPeople(res.data)
 				setLoading(false)
 			} catch (error) {
-				console.log(error.message)
-				setError(true)
+				setLoading(false)
+				setError(error.message)
 			}
 		}
 		fetchData()
@@ -35,6 +36,9 @@ const DatingCards = () => {
 
 	if (loading) {
 		return <LoadingComponent />
+	}
+	if (error) {
+		return <ErrorComponent message={error} />
 	}
 
 	return (
